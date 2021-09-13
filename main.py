@@ -1,3 +1,5 @@
+from gym.wrappers import Monitor
+
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.regularizers import L2
@@ -29,8 +31,8 @@ def self_play(network_model,config):
 
         if (num_iter % config['self_play']['save_interval']) == 0:
             timestamp = str(time.time()).replace('.','_')
-            with open(f'replay_buffers/{timestamp}.pkl','wb') as file: pickle.dump(replay_buffer,file)
-            network_model.save(timestamp)
+            with open(f"replay_buffers/{config['env']['env_name']}_{timestamp}.pkl",'wb') as file: pickle.dump(replay_buffer,file)
+            network_model.save(f"{config['env']['env_name']}_{timestamp}")
         
     return replay_buffer
 
@@ -142,14 +144,14 @@ def train(network_model,replay_buffer,optimizer,config):
     optimizer.apply_gradients( zip( grads[2], network_model.prediction_function.trainable_variables ) )
 
 def get_temperature(num_iter):
-    if num_iter < 400: return 3
-    elif num_iter < 800: return 2
-    elif num_iter < 1200: return 1
+    if num_iter < 400: return 2#3
+    elif num_iter < 800: return 1#2
+    elif num_iter < 1200: return .75#1
     else: return .5
 ##    elif num_iter < 1600: return .5
 ##    else: return .25
 
-def test(network_model,n=1):
+def test(network_model,config,n=1):
     game_list = []
     for _ in range(n):
         game = Game(config)
@@ -164,19 +166,36 @@ def test(network_model,n=1):
         game_list.append(game)
     return game_list
 
+def record(network_model,config):
+    game = Game(config)
+    
+    game.env = Monitor( gym.make(config['env']['env_name']) , f"assets/{config['env']['env_name']}_{str(time.time()).replace('.','_')}" )
+    game.env.seed( int( np.random.choice( range(int(1e5)) ) ) )
+    game.current_state = game.env.reset()
+
+    while not game.at_terminal_state:
+        game.env.render()
+        action_index = mcts(game,network_model,None,config)
+        game.apply_action(action_index)
+
+    print(f'Total reward: {sum(game.reward_history)}')
+
 if __name__ == '__main__':
     env_attributes = { 'cartpole': { 'env_name': 'CartPole-v1',
                                      'state_shape': (4,),
                                      'action_size': 2 },
                        'mountaincar': { 'env_name': 'MountainCar-v0',
                                         'state_shape': (2,),
-                                        'action_size': 3 }
+                                        'action_size': 3 },
+                       'acrobot': { 'env_name': 'Acrobot-v1',
+                                    'state_shape': (6,),
+                                    'action_size': 3 }
                        }
 
-    env_name = 'mountaincar' # change this value to train different environments
-    config = { 'env': { 'env_name': env_attributes[env_name]['env_name'],
-                        'state_shape': env_attributes[env_name]['state_shape'], # used to define input shape for representation function
-                        'action_size': env_attributes[env_name]['action_size'] }, # used to define output size for prediction function
+    env_key_name = 'mountaincar' # change this value to train different environments
+    config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
+                        'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
+                        'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function
                'model': { 'representation_function': { 'num_layers': 4,
                                                        'num_neurons': 64,
                                                        'activation_function': 'relu',
@@ -214,8 +233,10 @@ if __name__ == '__main__':
         replay_buffer = self_play(network_model,config)
 
 ##    network_model = NetworkModel(config)
-##    network_model.load('cartpole_1631394556_759742')
-##    game_list = test(network_model,n=1)
+##    network_model.load('CartPole-v1_1631394556_759742')
+
+##    game_list = test(network_model,config,n=1)
+##    record(network_model,config)
     
     # read paper: gradient scaling and bound/constraints for values
     # whenever game is added to OR removed from replay buffer, update maximum and minimum values for game.reward_history and game.value_history

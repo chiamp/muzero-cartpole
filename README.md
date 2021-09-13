@@ -65,11 +65,11 @@ Below is a description of how the MuZero algorithm works in more detail.
 
 ### Data structures
 MuZero is comprised of three neural networks: 
-* A representation function, <img src="https://render.githubusercontent.com/render/math?math=h(o_t) \rightarrow s_t"> $h(o_t) \rightarrow s_t$, which given an observation $o_t$ from the environment, outputs a hidden state representation $s_t$ of the observation at time $t$
+* A representation function, <img src="https://render.githubusercontent.com/render/math?math=h(o_t) \rightarrow s_t">, which given an observation <img src="https://render.githubusercontent.com/render/math?math=o_t"> from the environment, outputs a hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s_t"> of the observation at time <img src="https://render.githubusercontent.com/render/math?math=t">
 	* The representation function is used in tandem with the dynamics function to represent the environment's state in whatever way the algorithm finds useful in order to maximize its reward
-* A dynamics function, $g(s_t,a_t) \rightarrow s_{t+1},r_{t+1}$, which given a hidden state representation $s_t$ and action $a_t$ at time $t$, outputs a new hidden state representation $s_{t+1}$ and transition reward $r_{t+1}$ at time $t+1$
+* A dynamics function, <img src="https://render.githubusercontent.com/render/math?math=g(s_t,a_t) \rightarrow s_{t%2B1},r_{t%2B1}">, which given a hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s_t"> and action <img src="https://render.githubusercontent.com/render/math?math=a_t"> at time <img src="https://render.githubusercontent.com/render/math?math=t">, outputs a new hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s_{t%2B1}"> and transition reward <img src="https://render.githubusercontent.com/render/math?math=r_{t%2B1}"> at time <img src="https://render.githubusercontent.com/render/math?math=t%2B1">
 	* The dynamics function is the transition model, which allows MuZero to utilize MCTS and plan hypothetical future actions and board states
-* A prediction function, $f(s_t) \rightarrow p_t,v_t$, which given a hidden state representation $s_t$, outputs a policy distribution over actions $p_t$ and value $v_t$ at time $t$
+* A prediction function, <img src="https://render.githubusercontent.com/render/math?math=f(s_t) \rightarrow p_t,v_t">, which given a hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s_t">, outputs a policy distribution over actions <img src="https://render.githubusercontent.com/render/math?math=p_t"> and value <img src="https://render.githubusercontent.com/render/math?math=v_t"> at time <img src="https://render.githubusercontent.com/render/math?math=t">
 	* The prediction function is used to limit the search breadth by prioritizing searching promising actions more often via its policy output, and limit the search depth by using the value output as a substitute for a Monte Carlo rollout
 
 A replay buffer is used to store the history of played games, and will be sampled from during training.
@@ -103,6 +103,8 @@ The "ground truth" for the value, is calculated using n-step bootstrapping, wher
 The three neural networks are then trained end-to-end, matching the predicted rewards, values and policies with the "ground truth" rewards, values and policies. L2 regularization was used as well.
 
 ![Alt text](assets/muzero_train.PNG)
+
+(MuZero diagrams can be found on page 3 of their [paper](https://arxiv.org/pdf/1911.08265.pdf))
 
 ## File Descriptions
 * `classes.py` holds data structure classes used by MuZero

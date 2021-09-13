@@ -8,7 +8,7 @@ This is a repo where I apply the MuZero reinforcement learning algorithm on the 
 * [What is gym?](#what-is-gym)
 * [MuZero Technical Details](#muzero-technical-details)
 * [File Descriptions](#file-descriptions)
-* [Resources](#resources)
+* [Additional Resources](#additional-resources)
 
 ## What is MuZero?
 Before we talk about MuZero, we have to mention and give context to its predecessors: AlphaGo, AlphaGo Zero and AlphaZero.
@@ -17,7 +17,9 @@ Before we talk about MuZero, we have to mention and give context to its predeces
 [AlphaGo](https://storage.googleapis.com/deepmind-media/alphago/AlphaGoNaturePaper.pdf) is a reinforcement learning algorithm created by DeepMind that managed to defeat the world champion at Go in 2016 ([link to documentary](https://www.youtube.com/watch?v=WXuK6gekU1Y)). It was considered a huge feat in artificial intelligence at the time, as although AI algorithms were able to defeat the best chess players (see [Deep Blue vs Kasparov](https://en.wikipedia.org/wiki/Deep_Blue_versus_Garry_Kasparov)), there did not exist an AI algorithm that was capable of defeating professional Go players. This is due to the fact that Go has a significantly larger amount of possible board positions (10<sup>170</sup>) compared to chess (10<sup>43</sup>), and so the same algorithms that were used to create superhuman AI algorithms for chess, could not be used for Go. 
 
 In addition, Deep Blue benefitted from game-specific knowledge; i.e. specific board positions and pattern structures were hard-coded into its evaluation function, which it uses to evaluate which board positions are favorable for itself (as seen on page 75 of the [Deep Blue paper](https://www.sciencedirect.com/science/article/pii/S0004370201001291)):
+
 ![Alt text](assets/deep_blue_evaluation_features.PNG)
+
 This knowledge specifically about the game of chess, was provided by chess grandmasters, who worked together with IBM to create Deep Blue.
 
 With Go, however, such a hand-crafted, hard-coded evaluation function was difficult to create due to the nature of the game, and coupled with the fact that the number of possible board positions was much greater than chess, made it much harder to develop an AI algorithm that could achieve high levels of performance.
@@ -62,8 +64,8 @@ Artificial intelligence has the potential to solve a lot of problems for us. The
 Below is a description of how the MuZero algorithm works in more detail.
 
 ### Data structures
-MuZero is comprised of three neural networks:
-* A representation function, $h(o_t) \rightarrow s_t$, which given an observation $o_t$ from the environment, outputs a hidden state representation $s_t$ of the observation at time $t$
+MuZero is comprised of three neural networks: 
+* A representation function, <img src="https://render.githubusercontent.com/render/math?math=h(o_t) \rightarrow s_t"> $h(o_t) \rightarrow s_t$, which given an observation $o_t$ from the environment, outputs a hidden state representation $s_t$ of the observation at time $t$
 	* The representation function is used in tandem with the dynamics function to represent the environment's state in whatever way the algorithm finds useful in order to maximize its reward
 * A dynamics function, $g(s_t,a_t) \rightarrow s_{t+1},r_{t+1}$, which given a hidden state representation $s_t$ and action $a_t$ at time $t$, outputs a new hidden state representation $s_{t+1}$ and transition reward $r_{t+1}$ at time $t+1$
 	* The dynamics function is the transition model, which allows MuZero to utilize MCTS and plan hypothetical future actions and board states
@@ -100,6 +102,8 @@ The "ground truth" for the value, is calculated using n-step bootstrapping, wher
 
 The three neural networks are then trained end-to-end, matching the predicted rewards, values and policies with the "ground truth" rewards, values and policies. L2 regularization was used as well.
 
+![Alt text](assets/muzero_train.PNG)
+
 ## File Descriptions
 * `classes.py` holds data structure classes used by MuZero
 * `main.py` holds functions for self-play, MCTS, training, testing and recording
@@ -108,6 +112,6 @@ The three neural networks are then trained end-to-end, matching the predicted re
 * `assets/` contains media used in this `README.md`
 * `requirements.txt` can install all required dependencies by typing `pip install requirements.txt` in the command line
 
-## Resources
+## Additional Resources
 * [Interview with David Silver, who led the AlphaGo team](https://www.youtube.com/watch?v=uPUEq8d73JI)
 * [DeepMind AlphaGo webpage](https://deepmind.com/research/case-studies/alphago-the-story-so-far)

@@ -111,8 +111,8 @@ The three neural networks are then trained end-to-end, matching the predicted re
 * `main.py` holds functions for self-play, MCTS, training, testing and recording
 * `models/` holds saved neural network models used by MuZero
 * `replay_buffers/` holds replay buffer instances, saved during self-play
-* `assets/` contains media used in this `README.md`
-* `requirements.txt` can install all required dependencies by typing `pip install requirements.txt` in the command line
+* `assets/` holds media used in this `README.md`
+* `requirements.txt` holds all required dependencies, which can be installed by typing `pip install requirements.txt` in the command line
 
 ## Additional Resources
 * [Interview with David Silver, who led the AlphaGo team](https://www.youtube.com/watch?v=uPUEq8d73JI)

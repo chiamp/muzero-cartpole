@@ -100,7 +100,7 @@ The predicted rewards outputted by the dynamics function are matched against the
 
 The "ground truth" for the value, is calculated using <img src="https://render.githubusercontent.com/render/math?math=n">-step bootstrapping, where <img src="https://render.githubusercontent.com/render/math?math=n"> is specified in the config parameter. If <img src="https://render.githubusercontent.com/render/math?math=n"> is a number equal to or larger than the episode length, then the value is calculated using the actual discounted transition rewards of the game of self-play, and reduces to the Monte Carlo return. If <img src="https://render.githubusercontent.com/render/math?math=n"> is less than the episode length, then discounted transition rewards are used until the <img src="https://render.githubusercontent.com/render/math?math=n">-step, at which the value outputted by the MCTS search is used to bootstrap. The predicted values outputted by the prediction function are then matched against these calculated values.
 
-The three neural networks are then trained end-to-end, matching the predicted rewards, values and policies with the "ground truth" rewards, values and policies. L2 regularization was used as well.
+The three neural networks are then trained end-to-end, matching the predicted rewards, values and policies with the "ground truth" rewards, values and policies. L2 regularization is used as well.
 
 ![Alt text](assets/muzero_train.PNG)
 

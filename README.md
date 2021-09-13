@@ -114,6 +114,8 @@ The three neural networks are then trained end-to-end, matching the predicted re
 * `assets/` holds media used in this `README.md`
 * `requirements.txt` holds all required dependencies, which can be installed by typing `pip install requirements.txt` in the command line
 
+For this project, I'm using Python 3.7.4.
+
 ## Additional Resources
 * [Interview with David Silver, who led the AlphaGo team](https://www.youtube.com/watch?v=uPUEq8d73JI)
 * [DeepMind AlphaGo webpage](https://deepmind.com/research/case-studies/alphago-the-story-so-far)

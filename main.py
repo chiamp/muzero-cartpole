@@ -192,7 +192,7 @@ if __name__ == '__main__':
                                     'action_size': 3 }
                        }
 
-    env_key_name = 'mountaincar' # change this value to train different environments
+    env_key_name = 'acrobot' # change this value to train different environments
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function
@@ -212,7 +212,7 @@ if __name__ == '__main__':
                'mcts': { 'num_simulations': 1e2,
                          'c1': 1.25, # for regulating mcts search exploration (higher value = more emphasis on prior value)
                          'c2': 19652 }, # for regulating mcts search exploration (higher value = lower emphasis on prior value)
-               'self_play': { 'num_games': 1200,
+               'self_play': { 'num_games': 1e10,
                               'save_interval': 100,
                               'discount_factor': 1.0 }, # used when backpropagating values up mcts, and when calculating bootstrapped value during training
                'replay_buffer': { 'buffer_size': 1e3,
@@ -230,6 +230,7 @@ if __name__ == '__main__':
 
     with tf.device('/CPU:0'):
         network_model = NetworkModel(config)
+        network_model.load('Acrobot-v1_1631581594_7407389')
         replay_buffer = self_play(network_model,config)
 
 ##    network_model = NetworkModel(config)

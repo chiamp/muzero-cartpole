@@ -144,10 +144,10 @@ def train(network_model,replay_buffer,optimizer,config):
     optimizer.apply_gradients( zip( grads[2], network_model.prediction_function.trainable_variables ) )
 
 def get_temperature(num_iter):
-    if num_iter < 400: return 2#3
-    elif num_iter < 800: return 1#2
-    elif num_iter < 1200: return .75#1
-    else: return .5
+    if num_iter < 400: return .75#3
+    elif num_iter < 800: return .5#2
+    elif num_iter < 1200: return .25#1
+    else: return .125#.5
 ##    elif num_iter < 1600: return .5
 ##    else: return .25
 

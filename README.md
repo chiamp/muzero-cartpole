@@ -109,6 +109,7 @@ The three neural networks are then trained end-to-end, matching the predicted re
 ## File Descriptions
 * `classes.py` holds data structure classes used by MuZero
 * `main.py` holds functions for self-play, MCTS, training, testing and recording
+	* `self_play` is the main function to call; it initiates self-play and trains MuZero
 * `models/` holds saved neural network models used by MuZero
 * `replay_buffers/` holds replay buffer instances, saved during self-play
 * `assets/` holds media used in this `README.md`

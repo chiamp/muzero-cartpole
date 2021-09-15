@@ -58,6 +58,7 @@ Artificial intelligence has the potential to solve a lot of problems for us. The
 
 ## What is gym?
 [gym](https://gym.openai.com/envs/) is a suite of virtual environments provided by OpenAI, to test reinforcement learning algorithms on. The suite contains everything from simple text games, to retro Atari games, to even 3D physics simulators. For this project, I apply the MuZero algorithm to 2D classic control environments. Below you can see the results of MuZero training in these environments:
+
 ![Alt text](assets/cartpole.gif)
 
 ## MuZero Technical Details

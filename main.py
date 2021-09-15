@@ -144,10 +144,10 @@ def train(network_model,replay_buffer,optimizer,config):
     optimizer.apply_gradients( zip( grads[2], network_model.prediction_function.trainable_variables ) )
 
 def get_temperature(num_iter):
-    if num_iter < 400: return .75#3
-    elif num_iter < 800: return .5#2
-    elif num_iter < 1200: return .25#1
-    else: return .125#.5
+    if num_iter < 400: return .5#3
+    elif num_iter < 800: return .25#2
+    elif num_iter < 1200: return .125#1
+    else: return .0625#.5
 ##    elif num_iter < 1600: return .5
 ##    else: return .25
 
@@ -192,7 +192,7 @@ if __name__ == '__main__':
                                     'action_size': 3 }
                        }
 
-    env_key_name = 'acrobot' # change this value to train different environments
+    env_key_name = 'mountaincar' # change this value to train different environments
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function
@@ -230,7 +230,7 @@ if __name__ == '__main__':
 
     with tf.device('/CPU:0'):
         network_model = NetworkModel(config)
-        network_model.load('Acrobot-v1_1631581594_7407389')
+##        network_model.load('Acrobot-v1_1631581594_7407389')
         replay_buffer = self_play(network_model,config)
 
 ##    network_model = NetworkModel(config)

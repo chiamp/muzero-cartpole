@@ -57,7 +57,7 @@ The elimination of the need to provide a transition model, is another step towar
 Artificial intelligence has the potential to solve a lot of problems for us. The fact that it could potentially discover novel things that humans either prematurely dismissed as non-optimal, or never even considered, is exciting to me, especially in the fields of medicine, energy and finance. I think we're at an exciting period of time where AI technology is expanding at an exponential rate, and I can't wait to see what the future has in store for us!
 
 ## What is gym?
-[gym](https://gym.openai.com/envs/) is a suite of virtual environments provided by OpenAI, to test reinforcement learning algorithms on. The suite contains everything from simple text games, to retro Atari games, to even 3D physics simulators. For this project, I apply the MuZero algorithm to 2D classic control environments. Below you can see some results:
+[gym](https://gym.openai.com/envs/) is a suite of virtual environments provided by OpenAI, to test reinforcement learning algorithms on. The suite contains everything from simple text games, to retro Atari games, to even 3D physics simulators. For this project, I apply the MuZero algorithm to 2D classic control environments. Below you can see the results of MuZero training in these environments:
 ![Alt text](assets/cartpole.gif)
 
 ## MuZero Technical Details

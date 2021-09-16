@@ -144,10 +144,10 @@ def train(network_model,replay_buffer,optimizer,config):
     optimizer.apply_gradients( zip( grads[2], network_model.prediction_function.trainable_variables ) )
 
 def get_temperature(num_iter):
-    if num_iter < 400: return .5#3
-    elif num_iter < 800: return .25#2
-    elif num_iter < 1200: return .125#1
-    else: return .0625#.5
+    if num_iter < 400: return 3
+    elif num_iter < 800: return 2
+    elif num_iter < 1200: return 1
+    else: return .5
 ##    elif num_iter < 1600: return .5
 ##    else: return .25
 
@@ -217,7 +217,7 @@ if __name__ == '__main__':
                               'discount_factor': 1.0 }, # used when backpropagating values up mcts, and when calculating bootstrapped value during training
                'replay_buffer': { 'buffer_size': 1e3,
                                   'sample_size': 1e2 },
-               'train': { 'num_bootstrap_timesteps': 500, # number of timesteps in the future to bootstrap true value
+               'train': { 'num_bootstrap_timesteps': 100,#500, # number of timesteps in the future to bootstrap true value
                           'num_unroll_steps': 1e1, # number of timesteps to unroll to match action trajectories for each game sample
                           'learning_rate': 1e-3,
                           'beta_1': 0.9,

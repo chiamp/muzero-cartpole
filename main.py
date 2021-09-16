@@ -16,7 +16,8 @@ from classes import *
 def self_play(network_model,config):
     optimizer = Adam(learning_rate=config['train']['learning_rate'],beta_1=config['train']['beta_1'],beta_2=config['train']['beta_2'])
 
-    replay_buffer = ReplayBuffer(config)
+##    replay_buffer = ReplayBuffer(config)
+    with open('replay_buffers/Acrobot-v1_1631744464_0856915.pkl','rb') as file: replay_buffer = pickle.load(file)
     start_time = time.time()
     for num_iter in range( 1 , int(config['self_play']['num_games'])+1 ):
         game = Game(config)
@@ -144,10 +145,10 @@ def train(network_model,replay_buffer,optimizer,config):
     optimizer.apply_gradients( zip( grads[2], network_model.prediction_function.trainable_variables ) )
 
 def get_temperature(num_iter):
-    if num_iter < 400: return 3
-    elif num_iter < 800: return 2
-    elif num_iter < 1200: return 1
-    else: return .5
+    if num_iter < 400: return 1#3
+    elif num_iter < 800: return 1#2
+    elif num_iter < 1200: return .75#1
+    else: return .75#.5
 ##    elif num_iter < 1600: return .5
 ##    else: return .25
 
@@ -192,7 +193,7 @@ if __name__ == '__main__':
                                     'action_size': 3 }
                        }
 
-    env_key_name = 'acrobot' # change this value to train different environments
+    env_key_name = 'acrobot' # change this value ('cartpole','mountaincar','acrobot') to train different environments
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function
@@ -210,14 +211,14 @@ if __name__ == '__main__':
                                                    'regularizer': L2(1e-3) },
                           'hidden_state_size': 32 }, # size of hidden state representation
                'mcts': { 'num_simulations': 1e2,
-                         'c1': 1.25, # for regulating mcts search exploration (higher value = more emphasis on prior value)
-                         'c2': 19652 }, # for regulating mcts search exploration (higher value = lower emphasis on prior value)
+                         'c1': 1.25, # for regulating mcts search exploration (higher value = more emphasis on prior value and visit count)
+                         'c2': 19652 }, # for regulating mcts search exploration (higher value = lower emphasis on prior value and visit count)
                'self_play': { 'num_games': 1e10,
                               'save_interval': 100,
                               'discount_factor': 1.0 }, # used when backpropagating values up mcts, and when calculating bootstrapped value during training
                'replay_buffer': { 'buffer_size': 1e3,
                                   'sample_size': 1e2 },
-               'train': { 'num_bootstrap_timesteps': 100,#500, # number of timesteps in the future to bootstrap true value
+               'train': { 'num_bootstrap_timesteps': 500, # number of timesteps in the future to bootstrap true value
                           'num_unroll_steps': 1e1, # number of timesteps to unroll to match action trajectories for each game sample
                           'learning_rate': 1e-3,
                           'beta_1': 0.9,
@@ -228,15 +229,23 @@ if __name__ == '__main__':
     tf.random.set_seed(config['seed'])
     np.random.seed(config['seed'])
 
-##    with tf.device('/CPU:0'):
-##        network_model = NetworkModel(config)
-####        network_model.load('Acrobot-v1_1631581594_7407389')
-##        replay_buffer = self_play(network_model,config)
+    with tf.device('/CPU:0'):
+        network_model = NetworkModel(config)
+##        network_model.load('Acrobot-v1_1631581594_7407389')
+        network_model.load('Acrobot-v1_1631744464_0856915')
+        replay_buffer = self_play(network_model,config)
 
-    network_model = NetworkModel(config)
-    network_model.load('Acrobot-v1_1631649880_0698953')
+##    network_model = NetworkModel(config)
+####    network_model.load('CartPole-v1_1631394556_759742')
+##    network_model.load('MountainCar-v0_1631738788_459358')
+##    g = Game(config)
+##    
+##    a,r = mcts(g,network_model,3,config)
+##    print(r.value,*[r.children[i].num_visits for i in range(config['env']['action_size'])])
+##    print(*[r.children[i].children[j].num_visits for i in range(config['env']['action_size']) \
+##            for j in range(config['env']['action_size'])])
 
-    game_list = test(network_model,config,n=1)
+##    game_list = test(network_model,config,n=1)
 ##    record(network_model,config)
     
     # read paper: gradient scaling and bound/constraints for values

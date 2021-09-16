@@ -192,7 +192,7 @@ if __name__ == '__main__':
                                     'action_size': 3 }
                        }
 
-    env_key_name = 'mountaincar' # change this value to train different environments
+    env_key_name = 'acrobot' # change this value to train different environments
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function
@@ -228,15 +228,15 @@ if __name__ == '__main__':
     tf.random.set_seed(config['seed'])
     np.random.seed(config['seed'])
 
-    with tf.device('/CPU:0'):
-        network_model = NetworkModel(config)
-##        network_model.load('Acrobot-v1_1631581594_7407389')
-        replay_buffer = self_play(network_model,config)
+##    with tf.device('/CPU:0'):
+##        network_model = NetworkModel(config)
+####        network_model.load('Acrobot-v1_1631581594_7407389')
+##        replay_buffer = self_play(network_model,config)
 
-##    network_model = NetworkModel(config)
-##    network_model.load('CartPole-v1_1631394556_759742')
+    network_model = NetworkModel(config)
+    network_model.load('Acrobot-v1_1631649880_0698953')
 
-##    game_list = test(network_model,config,n=1)
+    game_list = test(network_model,config,n=1)
 ##    record(network_model,config)
     
     # read paper: gradient scaling and bound/constraints for values

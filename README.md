@@ -80,7 +80,7 @@ A replay buffer is used to store the history of played games, and will be sample
 ### Self-play
 At every time step during self-play, the environment's current state is passed into MuZero's representation function, which outputs a hidden state representation. Monte Carlo Tree Search is then performed for a number of simulations specified in the config parameter. 
 
-In each iteration, the tree is first traversed until a leaf node (non-expanded node) is selected. Selection of nodes is based on a modified UCB score that is dependent on the mean action Q-value and prior probability given by the prediction function. The mean action Q-value is min-max normalized to account for environments where the value is unbounded.
+In each iteration, we start at the root node and traverse the tree until a leaf node (non-expanded node) is selected. Selection of nodes is based on a modified UCB score that is dependent on the mean action Q-value and prior probability given by the prediction function. The mean action Q-value is min-max normalized to account for environments where the value is unbounded.
 
 The leaf node is then expanded by passing the parent node's hidden state representation and the corresponding action into the dynamics function, which outputs the hidden state representation and transition reward for the leaf node.
 
@@ -115,7 +115,7 @@ The three neural networks are then trained end-to-end, matching the predicted re
 	* `self_play` is the main function to call; it initiates self-play and trains MuZero
 * `models/` holds saved neural network models used by MuZero
 * `replay_buffers/` holds replay buffer instances, saved during self-play
-* `assets/` holds media used in this `README.md`
+* `assets/` holds media files used in this `README.md`
 * `requirements.txt` holds all required dependencies, which can be installed by typing `pip install requirements.txt` in the command line
 
 For this project, I'm using Python 3.7.4.

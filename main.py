@@ -13,7 +13,9 @@ import time
 from classes import *
 
 
-def self_play(network_model,config):
+def self_play(network_model,config): # main loop
+    # facilitates self-play via MCTS, and then trains network_model
+    
     optimizer = Adam(learning_rate=config['train']['learning_rate'],beta_1=config['train']['beta_1'],beta_2=config['train']['beta_2'])
 
     replay_buffer = ReplayBuffer(config)
@@ -37,7 +39,7 @@ def self_play(network_model,config):
         
     return replay_buffer
 
-def mcts(game,network_model,temperature,config):
+def mcts(game,network_model,temperature,config): # Monte Carlo Tree Search
     root_node = Node(0)
     root_node.expand_root_node(game.current_state,network_model)
 ##    root_node.cumulative_value += root_node.value # backpropagate value to mean Q value
@@ -90,7 +92,8 @@ def mcts(game,network_model,temperature,config):
 
     return action_index
 
-def train(network_model,replay_buffer,optimizer,config):
+def train(network_model,replay_buffer,optimizer,config): # training loop
+    # for every game in sample batch, unroll and update network_model weights for config['train']['num_unroll_steps'] time steps
     with tf.GradientTape() as tape:
 
         loss = 0
@@ -144,7 +147,8 @@ def train(network_model,replay_buffer,optimizer,config):
     optimizer.apply_gradients( zip( grads[1], network_model.dynamics_function.trainable_variables ) )
     optimizer.apply_gradients( zip( grads[2], network_model.prediction_function.trainable_variables ) )
 
-def get_temperature(num_iter):
+def get_temperature(num_iter): # temperature function used to regulate exploration vs exploitation when selecting actions during self-play
+    # as num_iter increases, temperature decreases, an actions become greedier
     if num_iter < 400: return 3
     elif num_iter < 800: return 2
     elif num_iter < 1200: return 1
@@ -152,7 +156,7 @@ def get_temperature(num_iter):
 ##    elif num_iter < 1600: return .5
 ##    else: return .25
 
-def test(network_model,config,n=1):
+def test(network_model,config,n=1): # play n games, and return a list of the game histories
     game_list = []
     for _ in range(n):
         game = Game(config)
@@ -167,7 +171,7 @@ def test(network_model,config,n=1):
         game_list.append(game)
     return game_list
 
-def record(network_model,config):
+def record(network_model,config): # play one game and record a video file, saved in the assets/ directory
     game = Game(config)
     
     game.env = Monitor( gym.make(config['env']['env_name']) , f"assets/{config['env']['env_name']}_{str(time.time()).replace('.','_')}" )
@@ -197,15 +201,15 @@ if __name__ == '__main__':
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function
-               'model': { 'representation_function': { 'num_layers': 1,#4,
+               'model': { 'representation_function': { 'num_layers': 2,#4,
                                                        'num_neurons': 8,#64,
                                                        'activation_function': 'relu',
                                                        'regularizer': L2(1e-3) },
-                          'dynamics_function': { 'num_layers': 1,#4,
+                          'dynamics_function': { 'num_layers': 2,#4,
                                                  'num_neurons': 8,#64,
                                                  'activation_function': 'relu',
                                                  'regularizer': L2(1e-3) },
-                          'prediction_function': { 'num_layers': 1,#4,
+                          'prediction_function': { 'num_layers': 2,#4,
                                                    'num_neurons': 8,#64,
                                                    'activation_function': 'relu',
                                                    'regularizer': L2(1e-3) },
@@ -219,7 +223,7 @@ if __name__ == '__main__':
                'replay_buffer': { 'buffer_size': 1e3,
                                   'sample_size': 1e2 }, #1e1
                'train': { 'num_bootstrap_timesteps': 500, # number of timesteps in the future to bootstrap true value
-                          'num_unroll_steps': 1, #1e1 # number of timesteps to unroll to match action trajectories for each game sample
+                          'num_unroll_steps': 1e1, #1 # number of timesteps to unroll to match action trajectories for each game sample
                           'learning_rate': 1e-3, #1e-2
                           'beta_1': 0.9,
                           'beta_2': 0.999 },
@@ -248,12 +252,5 @@ if __name__ == '__main__':
 ##    game_list = test(network_model,config,n=1)
 ##    record(network_model,config)
     
-    # read paper: gradient scaling and bound/constraints for values
-    # whenever game is added to OR removed from replay buffer, update maximum and minimum values for game.reward_history and game.value_history
-    # then during training when games are sampled, normalize game.reward_history and game.value_history based on min/max values in buffer
-    # check mcts and how value is backpropagated
-    # check mcts and if cumulative_sum should be updated upon expansion of the node
-    # add a time parameter / 500 as a feature, so that game knows how many time steps in the game there are left (otherwise it could predict maximum value at the last time step if the state is favorable/pole is balanced perfectly)
-    # use nchain
     
     

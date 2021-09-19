@@ -120,6 +120,12 @@ The three neural networks are then trained end-to-end, matching the predicted re
 
 For this project, I'm using Python 3.7.4.
 
+For the lunar lander environment, the following commands must be executed in Anaconda:
+* `conda install swig`
+* `pip install box2d`
+
+See [here](https://stackoverflow.com/questions/54252800/python-cant-install-box2d-swig-exe-failed-with-error-code-1) for additional information.
+
 ## Additional Resources
 * [Full interview with David Silver, who led the AlphaGo team](https://www.youtube.com/watch?v=uPUEq8d73JI)
 * [DeepMind AlphaGo webpage](https://deepmind.com/research/case-studies/alphago-the-story-so-far)

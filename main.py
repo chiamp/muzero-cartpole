@@ -149,6 +149,7 @@ def train(network_model,replay_buffer,optimizer,config): # training loop
 
 def get_temperature(num_iter): # temperature function used to regulate exploration vs exploitation when selecting actions during self-play
     # as num_iter increases, temperature decreases, an actions become greedier
+##    return .75
     if num_iter < 400: return 3
     elif num_iter < 800: return 2
     elif num_iter < 1200: return 1
@@ -194,26 +195,29 @@ if __name__ == '__main__':
                                         'action_size': 3 },
                        'acrobot': { 'env_name': 'Acrobot-v1',
                                     'state_shape': (6,),
-                                    'action_size': 3 }
+                                    'action_size': 3 },
+                       'lunarlander': { 'env_name': 'LunarLander-v2',
+                                        'state_shape': (8,),
+                                        'action_size': 4 }
                        }
 
-    env_key_name = 'cartpole' # change this value ('cartpole','mountaincar','acrobot') to train different environments
+    env_key_name = 'acrobot' # change this value ('cartpole','mountaincar','acrobot') to train different environments
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function
-               'model': { 'representation_function': { 'num_layers': 2,#4,
-                                                       'num_neurons': 8,#64,
+               'model': { 'representation_function': { 'num_layers': 4,#1,#4,
+                                                       'num_neurons': 64,#16,#64,
                                                        'activation_function': 'relu',
                                                        'regularizer': L2(1e-3) },
-                          'dynamics_function': { 'num_layers': 2,#4,
-                                                 'num_neurons': 8,#64,
+                          'dynamics_function': { 'num_layers': 4,#1,#4,
+                                                 'num_neurons': 64,#16,#64,
                                                  'activation_function': 'relu',
                                                  'regularizer': L2(1e-3) },
-                          'prediction_function': { 'num_layers': 2,#4,
-                                                   'num_neurons': 8,#64,
+                          'prediction_function': { 'num_layers': 4,#1,#4,
+                                                   'num_neurons': 64,#16,#64,
                                                    'activation_function': 'relu',
                                                    'regularizer': L2(1e-3) },
-                          'hidden_state_size': 8 }, #32 # size of hidden state representation
+                          'hidden_state_size': 32 }, #8 # size of hidden state representation
                'mcts': { 'num_simulations': 1e2,
                          'c1': 1.25, #1e-1 # for regulating mcts search exploration (higher value = more emphasis on prior value and visit count)
                          'c2': 19625 }, #1e6 # for regulating mcts search exploration (higher value = lower emphasis on prior value and visit count)
@@ -237,12 +241,14 @@ if __name__ == '__main__':
         network_model = NetworkModel(config)
 ####        network_model.load('Acrobot-v1_1631581594_7407389')
 ##        network_model.load('Acrobot-v1_1631744464_0856915')
+        network_model.load('Acrobot-v1_1632058191_2013526')
         replay_buffer = self_play(network_model,config)
 
 ##    network_model = NetworkModel(config)
 ####    network_model.load('CartPole-v1_1631394556_759742')
-##    network_model.load('MountainCar-v0_1631738788_459358')
-##    g = Game(config)
+##    network_model.load('CartPole-v1_1632015579_2017398')
+####    network_model.load('MountainCar-v0_1631738788_459358')
+####    g = Game(config)
 ##    
 ##    a,r = mcts(g,network_model,3,config)
 ##    print(r.value,*[r.children[i].num_visits for i in range(config['env']['action_size'])])

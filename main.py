@@ -150,9 +150,9 @@ def train(network_model,replay_buffer,optimizer,config): # training loop
 def get_temperature(num_iter): # temperature function used to regulate exploration vs exploitation when selecting actions during self-play
     # as num_iter increases, temperature decreases, an actions become greedier
 ##    return .75
-    if num_iter < 400: return 3
-    elif num_iter < 800: return 2
-    elif num_iter < 1200: return 1
+    if num_iter < 400*2: return 3
+    elif num_iter < 800*2: return 2
+    elif num_iter < 1200*2: return 1
     else: return .5
 ##    elif num_iter < 1600: return .5
 ##    else: return .25
@@ -201,7 +201,7 @@ if __name__ == '__main__':
                                         'action_size': 4 }
                        }
 
-    env_key_name = 'acrobot' # change this value ('cartpole','mountaincar','acrobot') to train different environments
+    env_key_name = 'lunarlander' # change this value ('cartpole','mountaincar','acrobot') to train different environments
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function
@@ -241,7 +241,7 @@ if __name__ == '__main__':
         network_model = NetworkModel(config)
 ####        network_model.load('Acrobot-v1_1631581594_7407389')
 ##        network_model.load('Acrobot-v1_1631744464_0856915')
-        network_model.load('Acrobot-v1_1632058191_2013526')
+##        network_model.load('Acrobot-v1_1632058191_2013526')
         replay_buffer = self_play(network_model,config)
 
 ##    network_model = NetworkModel(config)

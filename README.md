@@ -129,4 +129,5 @@ See [here](https://stackoverflow.com/questions/54252800/python-cant-install-box2
 ## Additional Resources
 * [Full interview with David Silver, who led the AlphaGo team](https://www.youtube.com/watch?v=uPUEq8d73JI)
 * [DeepMind AlphaGo webpage](https://deepmind.com/research/case-studies/alphago-the-story-so-far)
+* [DeepMind MuZero webpage](https://deepmind.com/blog/article/muzero-mastering-go-chess-shogi-and-atari-without-rules)
 * [Playlist of Youtube videos related to AlphaGo](https://www.youtube.com/playlist?list=PLqYmG7hTraZBy7J_4ynYPc0Ml1RUGcLmD)

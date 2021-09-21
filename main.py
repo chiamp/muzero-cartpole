@@ -226,7 +226,7 @@ if __name__ == '__main__':
                               'discount_factor': 1.0 }, # used when backpropagating values up mcts, and when calculating bootstrapped value during training
                'replay_buffer': { 'buffer_size': 1e3,
                                   'sample_size': 1e2 }, #1e1
-               'train': { 'num_bootstrap_timesteps': 500, # number of timesteps in the future to bootstrap true value
+               'train': { 'num_bootstrap_timesteps': 1000, # number of timesteps in the future to bootstrap true value
                           'num_unroll_steps': 1e1, #1 # number of timesteps to unroll to match action trajectories for each game sample
                           'learning_rate': 1e-3, #1e-2
                           'beta_1': 0.9,

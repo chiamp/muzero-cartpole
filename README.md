@@ -131,3 +131,4 @@ See [here](https://stackoverflow.com/questions/54252800/python-cant-install-box2
 * [DeepMind AlphaGo webpage](https://deepmind.com/research/case-studies/alphago-the-story-so-far)
 * [DeepMind MuZero webpage](https://deepmind.com/blog/article/muzero-mastering-go-chess-shogi-and-atari-without-rules)
 * [Playlist of Youtube videos related to AlphaGo](https://www.youtube.com/playlist?list=PLqYmG7hTraZBy7J_4ynYPc0Ml1RUGcLmD)
+* [A Youtube video describing an overview of the MuZero algorithm](https://www.youtube.com/watch?v=szbvm8aNDxw)

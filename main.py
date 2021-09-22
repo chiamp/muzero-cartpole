@@ -54,6 +54,8 @@ def mcts(game,network_model,temperature,config): # Monte Carlo Tree Search
         search_path = [root_node] # node0, ... (includes the final leaf node)
         action_history = [] # action0, ...
         while current_node.is_expanded:
+            # total_num_visits need to be at least 1
+            # otherwise when selecting for child nodes that haven't been visited, their priors won't be taken into account, because it'll be multiplied by total_num_visits in the UCB score, which is zero
             total_num_visits = sum([ current_node.children[i].num_visits for i in range(len(current_node.children)) ])
 
             action_index = np.argmax([ current_node.children[i].get_ucb_score(total_num_visits,min_q_value,max_q_value,config) for i in range(len(current_node.children)) ])
@@ -87,8 +89,8 @@ def mcts(game,network_model,temperature,config): # Monte Carlo Tree Search
         action_index = np.random.choice( range(network_model.action_size) , p=policy )
 
     # update Game search statistics
-    game.value_history.append(root_node.value)
-    game.policy_history.append(policy)
+    game.value_history.append( root_node.value )#root_node.cumulative_value/root_node.num_visits ) # use the root node's MCTS value as the ground truth value when training
+    game.policy_history.append(policy) # use the MCTS policy (not altered by temperature) as the ground truth value when training
 
     return action_index
 
@@ -108,7 +110,7 @@ def train(network_model,replay_buffer,optimizer,config): # training loop
             # we then match these predicted values to the true values
             # note we don't call the prediction function on the initial hidden state representation given by the representation function, since there's no associating predicted transition reward to match the true transition reward
             # this is because we don't / shouldn't have access to the previous action that lead to the initial state
-            if (sampled_index+config['train']['num_unroll_steps']) < (game_length-1): num_unroll_steps = int(config['train']['num_unroll_steps'])
+            if (sampled_index+config['train']['num_unroll_steps']) < game_length: num_unroll_steps = int(config['train']['num_unroll_steps'])
             else: num_unroll_steps = game_length-1-sampled_index
 ##            for start_index in range( sampled_index , int( min( game_length-1 , sampled_index+config['train']['num_unroll_steps'] ) ) ):
             for start_index in range( sampled_index , sampled_index+num_unroll_steps ):
@@ -150,11 +152,14 @@ def train(network_model,replay_buffer,optimizer,config): # training loop
 def get_temperature(num_iter): # temperature function used to regulate exploration vs exploitation when selecting actions during self-play
     # as num_iter increases, temperature decreases, an actions become greedier
 ##    return .75
-    if num_iter < 400*2: return 3
-    elif num_iter < 800*2: return 2
-    elif num_iter < 1200*2: return 1
-    else: return .5
-##    elif num_iter < 1600: return .5
+    if num_iter < 400: return 3
+    elif num_iter < 800: return 2
+    elif num_iter < 1200: return 1
+##    else: return .5
+    elif num_iter < 1600: return .5
+    elif num_iter < 2000: return .25
+    elif num_iter < 2400: return .125
+    else: return .0625
 ##    else: return .25
 
 def test(network_model,config,n=1): # play n games, and return a list of the game histories
@@ -201,7 +206,7 @@ if __name__ == '__main__':
                                         'action_size': 4 }
                        }
 
-    env_key_name = 'lunarlander' # change this value ('cartpole','mountaincar','acrobot') to train different environments
+    env_key_name = 'cartpole' # change this value ('cartpole','mountaincar','acrobot') to train different environments
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function
@@ -226,8 +231,8 @@ if __name__ == '__main__':
                               'discount_factor': 1.0 }, # used when backpropagating values up mcts, and when calculating bootstrapped value during training
                'replay_buffer': { 'buffer_size': 1e3,
                                   'sample_size': 1e2 }, #1e1
-               'train': { 'num_bootstrap_timesteps': 1000, # number of timesteps in the future to bootstrap true value
-                          'num_unroll_steps': 1e1, #1 # number of timesteps to unroll to match action trajectories for each game sample
+               'train': { 'num_bootstrap_timesteps': 1000, #500 # number of timesteps in the future to bootstrap true value
+                          'num_unroll_steps': 1e1, #1e2 # number of timesteps to unroll to match action trajectories for each game sample
                           'learning_rate': 1e-3, #1e-2
                           'beta_1': 0.9,
                           'beta_2': 0.999 },

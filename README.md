@@ -116,7 +116,7 @@ The three neural networks are then trained end-to-end, matching the predicted re
 * `models/` holds saved neural network models used by MuZero
 * `replay_buffers/` holds replay buffer instances, saved during self-play
 * `assets/` holds media files used in this `README.md`
-* `requirements.txt` holds all required dependencies, which can be installed by typing `pip install requirements.txt` in the command line
+* `requirements.txt` holds all required dependencies, which can be installed by typing `pip install -r requirements.txt` in the command line
 
 For this project, I'm using Python 3.7.4.
 

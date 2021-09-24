@@ -56,7 +56,7 @@ def mcts(game,network_model,temperature,config): # Monte Carlo Tree Search
         while current_node.is_expanded:
             # total_num_visits need to be at least 1
             # otherwise when selecting for child nodes that haven't been visited, their priors won't be taken into account, because it'll be multiplied by total_num_visits in the UCB score, which is zero
-            total_num_visits = sum([ current_node.children[i].num_visits for i in range(len(current_node.children)) ])
+            total_num_visits = max( 1 , sum([ current_node.children[i].num_visits for i in range(len(current_node.children)) ]) )
 
             action_index = np.argmax([ current_node.children[i].get_ucb_score(total_num_visits,min_q_value,max_q_value,config) for i in range(len(current_node.children)) ])
             current_node = current_node.children[action_index]
@@ -89,7 +89,7 @@ def mcts(game,network_model,temperature,config): # Monte Carlo Tree Search
         action_index = np.random.choice( range(network_model.action_size) , p=policy )
 
     # update Game search statistics
-    game.value_history.append( root_node.value )#root_node.cumulative_value/root_node.num_visits ) # use the root node's MCTS value as the ground truth value when training
+    game.value_history.append( root_node.cumulative_value/root_node.num_visits ) # use the root node's MCTS value as the ground truth value when training
     game.policy_history.append(policy) # use the MCTS policy (not altered by temperature) as the ground truth value when training
 
     return action_index
@@ -206,7 +206,7 @@ if __name__ == '__main__':
                                         'action_size': 4 }
                        }
 
-    env_key_name = 'cartpole' # change this value ('cartpole','mountaincar','acrobot') to train different environments
+    env_key_name = 'lunarlander' # change this value ('cartpole','mountaincar','acrobot') to train different environments
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function

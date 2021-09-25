@@ -206,7 +206,7 @@ if __name__ == '__main__':
                                         'action_size': 4 }
                        }
 
-    env_key_name = 'lunarlander' # change this value ('cartpole','mountaincar','acrobot') to train different environments
+    env_key_name = 'cartpole' # change this value ('cartpole','mountaincar','acrobot') to train different environments
     config = { 'env': { 'env_name': env_attributes[env_key_name]['env_name'],
                         'state_shape': env_attributes[env_key_name]['state_shape'], # used to define input shape for representation function
                         'action_size': env_attributes[env_key_name]['action_size'] }, # used to define output size for prediction function

@@ -1,6 +1,7 @@
 
+
 # MuZero and gym
-This is a repo where I apply the MuZero reinforcement learning algorithm on the gym environments provided by OpenAI.
+This is a repo where I apply the MuZero reinforcement learning algorithm on the cart pole environment in gym, provided by OpenAI.
 
 ## Table of Contents
 * [What is MuZero?](#what-is-muzero)
@@ -59,9 +60,33 @@ Yet humans are able to navigate through this messy world with relative success. 
 Artificial intelligence has the potential to solve a lot of problems for us. The fact that it could potentially discover novel things that humans either prematurely dismissed as non-optimal, or never even considered, is exciting to me, especially in the fields of medicine and energy. I think we're at an exciting period of time where AI technology is expanding at an exponential rate, and I can't wait to see what the future has in store for us!
 
 ## What is gym?
-[gym](https://gym.openai.com/envs/) is a suite of virtual environments provided by OpenAI, to test reinforcement learning algorithms on. The suite contains everything from simple text games, to retro Atari games, to even 3D physics simulators. For this project, I apply the MuZero algorithm to 2D classic control environments. Below you can see the results of MuZero training in these environments:
+[gym](https://gym.openai.com/envs/) is a suite of virtual environments provided by OpenAI, to test reinforcement learning algorithms on. The suite contains everything from simple text games, to retro Atari games, to even 3D physics simulators. For this project, I apply the MuZero algorithm to the cart pole environment. The goal of the agent is to balance a pole on a cart, by moving the cart left and right. The agent is incentivized with a reward equal to how long the pole stays balanced on the cart; the longer the pole is kept balanced, the bigger the reward.
 
-![Alt text](assets/cartpole.gif)
+Below you can see the progression of the agent learning over time. Initially, it knows nothing of the environment and performs terribly. But gradually through experience, the agent learns to balance the pole on top of the cart indefinitely.
+
+#### Initial (0 games played)
+![Alt text](assets/cartpole_0_games.gif)
+
+#### After playing 100 games
+![Alt text](assets/cartpole_100_games.gif)
+
+#### After playing 200 games
+![Alt text](assets/cartpole_200_games.gif)
+
+#### After playing 300 games
+![Alt text](assets/cartpole_300_games.gif)
+
+#### After playing 400 games
+![Alt text](assets/cartpole_400_games.gif)
+
+#### After playing 500 games
+![Alt text](assets/cartpole_500_games.gif)
+
+#### After playing 600 games
+![Alt text](assets/cartpole_600_games.gif)
+
+#### After playing 700 games
+![Alt text](assets/cartpole_700_games.gif)
 
 ## MuZero Technical Details
 Below is a description of how the MuZero algorithm works in more detail.

@@ -306,7 +306,7 @@ class ReplayBuffer:
         self.sample_size = int(config['replay_buffer']['sample_size'])
     def add(self,game):
         """
-        Add the game to the ReplayBuffer. Remove the oldest Game entry if the size of the buffer exceeds buffer_size (which is set by the config parameter upon instantiation)
+        Add the game to the ReplayBuffer. Remove the oldest Game entry if the size of the buffer exceeds buffer_size (which is set by the config parameter upon instantiation).
         
         Args:
             game (Game): The Game to add to the ReplayBuffer

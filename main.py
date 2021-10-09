@@ -17,7 +17,7 @@ def self_play(network_model,config):
     """
     This is the main function to call.
     Iteratively perform self-play via Monte Carlo Tree Search (MCTS), and then train the network_model.
-    Every config['self_play']['save_interval'], test the network_model and record the game rendering
+    Every config['self_play']['save_interval'], test the network_model and record the game rendering.
 
     Args:
         network_model (NetworkModel): The network model to be trained
@@ -123,7 +123,7 @@ def mcts(game,network_model,temperature,config):
 
 def train(network_model,replay_buffer,optimizer,config):
     """
-    Train the network_model by sampling games from the replay_buffer
+    Train the network_model by sampling games from the replay_buffer.
 
     Args:
         network_model (NetworkModel): The network model will be used for inference to conduct MCTS
@@ -202,9 +202,13 @@ def get_temperature(num_iter):
     """
     
     # as num_iter increases, temperature decreases, and actions become greedier
-    if num_iter < 200: return 3
-    elif num_iter < 400: return 2
-    else: return 1
+    if num_iter < 100: return 3
+    elif num_iter < 200: return 2
+    elif num_iter < 300: return 1
+    elif num_iter < 400: return .5
+    elif num_iter < 500: return .25
+    elif num_iter < 600: return .125
+    else: return .0625
 
 def test(network_model,config):
     """
@@ -243,7 +247,7 @@ def test(network_model,config):
     return game_list
 
 if __name__ == '__main__':
-    # dictionary definining gym environment attributes
+    # dictionary defining gym environment attributes
     env_attributes = { 'cartpole': { 'env_name': 'CartPole-v1',
                                      'state_shape': (4,),
                                      'action_size': 2 }
@@ -265,10 +269,10 @@ if __name__ == '__main__':
                                                    'num_neurons': 256,
                                                    'activation_function': 'relu',
                                                    'regularizer': L2(1e-3) },
-                          'hidden_state_size': 256 }, #8 # size of hidden state representation
+                          'hidden_state_size': 256 }, # size of hidden state representation
                'mcts': { 'num_simulations': 1e2, # number of simulations to conduct, every time we call MCTS
-                         'c1': 1.25, # for regulating mcts search exploration (higher value = more emphasis on prior value and visit count)
-                         'c2': 19625 }, # for regulating mcts search exploration (higher value = lower emphasis on prior value and visit count)
+                         'c1': 1.25, # for regulating MCTS search exploration (higher value = more emphasis on prior value and visit count)
+                         'c2': 19625 }, # for regulating MCTS search exploration (higher value = lower emphasis on prior value and visit count)
                'self_play': { 'num_games': 700, # number of games the agent plays to train on
                               'discount_factor': 1.0, # used when backpropagating values up mcts, and when calculating bootstrapped value during training
                               'save_interval': 100 }, # how often to save network_model weights and replay_buffer
@@ -281,7 +285,7 @@ if __name__ == '__main__':
                           'beta_2': 0.999 }, # parameter for Adam optimizer
                'test': { 'num_test_games': 10, # number of times to test the agent using greedy actions
                          'record': True }, # True if you want to record the game renders, False otherwise
-               'seed': 1
+               'seed': 0
                }
 
     tf.random.set_seed(config['seed'])

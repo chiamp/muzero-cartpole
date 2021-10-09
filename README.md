@@ -1,6 +1,5 @@
 
-
-# MuZero and gym
+# MuZero and cart pole
 This is a repo where I apply the MuZero reinforcement learning algorithm on the cart pole environment in gym, provided by OpenAI.
 
 ## Table of Contents
@@ -57,12 +56,14 @@ The elimination of the need to provide a transition model, is another step towar
 
 Yet humans are able to navigate through this messy world with relative success. Indeed humans have learned a transition model of the world themselves through experience; for example, we can reasonably predict the trajectory of a ball thrown to us to catch it, we know that an object can fall and break if we push it off the table, we can predict how slippery a surface would be to walk on just by looking at it etc. By using our "transition model", i.e. our understanding of "the rules of the game", we can plan accordingly and take actions to achieve our goals. We learn this "transition model" through our own experiences in life, and that's exactly what's happening with MuZero as well. Without being supplied the "rules of the game", it builds a transition model for itself via self-play and using that, plans for hypothetical future situations with MCTS and takes actions to maximize its reward. With this algorithm, we're one step closer towards using artificial intelligence in real world applications.
 
-Artificial intelligence has the potential to solve a lot of problems for us. The fact that it could potentially discover novel things that humans either prematurely dismissed as non-optimal, or never even considered, is exciting to me, especially in the fields of medicine and energy. I think we're at an exciting period of time where AI technology is expanding at an exponential rate, and I can't wait to see what the future has in store for us!
+Artificial intelligence has the potential to solve a lot of problems for us. The fact that it could potentially discover novel things that humans either prematurely dismissed as non-optimal, or never even considered, is exciting to me, especially in the fields of genetics, medicine and energy. I think we're at an exciting period of time where AI technology is expanding at an exponential rate, and I can't wait to see what the future has in store for us!
 
 ## What is gym?
-[gym](https://gym.openai.com/envs/) is a suite of virtual environments provided by OpenAI, to test reinforcement learning algorithms on. The suite contains everything from simple text games, to retro Atari games, to even 3D physics simulators. For this project, I apply the MuZero algorithm to the cart pole environment. The goal of the agent is to balance a pole on a cart, by moving the cart left and right. The agent is incentivized with a reward equal to how long the pole stays balanced on the cart; the longer the pole is kept balanced, the bigger the reward.
+[gym](https://gym.openai.com/envs/) is a suite of virtual environments provided by OpenAI, to test reinforcement learning algorithms on. The suite contains everything from simple text games, to retro Atari games, to even 3D physics simulators.
 
-Below you can see the progression of the agent learning over time. Initially, it knows nothing of the environment and performs terribly. But gradually through experience, the agent learns to balance the pole on top of the cart indefinitely.
+For this project, I apply the MuZero algorithm to the cart pole environment. The goal of the agent is to balance a pole on a cart, by moving the cart left and right. The agent is incentivized with a reward equal to how long the pole stays balanced on the cart; the longer the pole is kept balanced, the bigger the reward.
+
+Below you can see the progression of the agent learning over time. Initially, it knows nothing of the environment and performs terribly. But gradually through experience, the agent learns "the rules of the game" and figures out an optimal strategy to balance the pole on top of the cart indefinitely.
 
 #### Initial (0 games played)
 ![Alt text](assets/cartpole_0_games.gif)
@@ -93,19 +94,19 @@ Below is a description of how the MuZero algorithm works in more detail.
 
 ### Data structures
 MuZero is comprised of three neural networks: 
-* A representation function, <img src="https://render.githubusercontent.com/render/math?math=h(o_t) \rightarrow s^0">, which given an observation <img src="https://render.githubusercontent.com/render/math?math=o_t"> from the environment at time step <img src="https://render.githubusercontent.com/render/math?math=t">, outputs a hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s^0"> of the observation at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=0"> (this hidden state will be used as the root node in MCTS, so its hypothetical time step is zero)
+* A representation function, <img src="https://render.githubusercontent.com/render/math?math=h(o_t) \rightarrow s^0">, which given an observation <img src="https://render.githubusercontent.com/render/math?math=o_t"> from the environment at time step <img src="https://render.githubusercontent.com/render/math?math=t">, outputs the hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s^0"> of the observation at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=0"> (this hidden state will be used as the root node in MCTS, so its hypothetical time step is zero)
 	* The representation function is used in tandem with the dynamics function to represent the environment's state in whatever way the algorithm finds useful in order to make accurate predictions for the reward, value and policy
-* A dynamics function, <img src="https://render.githubusercontent.com/render/math?math=g(s^k,a^{k%2B1}) \rightarrow s^{k%2B1},r^{k%2B1}">, which given a hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s^k"> at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=k"> and action <img src="https://render.githubusercontent.com/render/math?math=a^{k%2B1}"> at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=k%2B1">, outputs a new hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s^{k%2B1}"> and transition reward <img src="https://render.githubusercontent.com/render/math?math=r^{k%2B1}"> at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=k%2B1">
+* A dynamics function, <img src="https://render.githubusercontent.com/render/math?math=g(s^k,a^{k%2B1}) \rightarrow s^{k%2B1},r^{k%2B1}">, which given a hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s^k"> at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=k"> and action <img src="https://render.githubusercontent.com/render/math?math=a^{k%2B1}"> at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=k%2B1">, outputs the predicted resulting hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s^{k%2B1}"> and transition reward <img src="https://render.githubusercontent.com/render/math?math=r^{k%2B1}"> at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=k%2B1">
 	* The dynamics function is the learned transition model, which allows MuZero to utilize MCTS and plan hypothetical future actions on future board states
-* A prediction function, <img src="https://render.githubusercontent.com/render/math?math=f(s^k) \rightarrow p^k,v^k">, which given a hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s^k">, outputs a policy distribution over actions <img src="https://render.githubusercontent.com/render/math?math=p^k"> and value <img src="https://render.githubusercontent.com/render/math?math=v^k"> at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=k">
+* A prediction function, <img src="https://render.githubusercontent.com/render/math?math=f(s^k) \rightarrow p^k,v^k">, which given a hidden state representation <img src="https://render.githubusercontent.com/render/math?math=s^k">, outputs the predicted policy distribution over actions <img src="https://render.githubusercontent.com/render/math?math=p^k"> and value <img src="https://render.githubusercontent.com/render/math?math=v^k"> at hypothetical time step <img src="https://render.githubusercontent.com/render/math?math=k">
 	* The prediction function is used to limit the search breadth by using the policy output to prioritize MCTS to search for more promising actions, and limit the search depth by using the value output as a substitute for a Monte Carlo rollout
 
 A replay buffer is used to store the history of played games, and will be sampled from during training.
 
 ### Self-play
-At every time step during self-play, the environment's current state is passed into MuZero's representation function, which outputs a hidden state representation. Monte Carlo Tree Search is then performed for a number of simulations specified in the config parameter. 
+At every time step during self-play, the environment's current state is passed into MuZero's representation function, which outputs the hidden state representation of the current state. Monte Carlo Tree Search is then performed for a number of simulations specified in the config parameter. 
 
-In each simulation of MCTS, we start at the root node and traverse the tree until a leaf node (non-expanded node) is selected. Selection of nodes is based on a modified UCB score that is dependent on the mean action Q-value and prior probability given by the prediction function. The mean action Q-value is min-max normalized to account for environments where the value is unbounded.
+In each simulation of MCTS, we start at the root node and traverse the tree until a leaf node (non-expanded node) is selected. Selection of nodes is based on a modified [UCB score](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation) that is dependent on the mean action Q-value and prior probability given by the prediction function (more detail can be found in Appendix B of the [MuZero](https://arxiv.org/pdf/1911.08265.pdf) paper). The mean action Q-value is min-max normalized to account for environments where the value is unbounded.
 
 The leaf node is then expanded by passing the parent node's hidden state representation and the corresponding action into the dynamics function, which outputs the hidden state representation and transition reward for the leaf node.
 
@@ -115,7 +116,7 @@ Finally, this predicted value is backpropagated up the tree, resulting in all no
 
 ![Alt text](assets/muzero_mcts1.PNG)
 
-Once the simulations are finished, an action is sampled from the distribution of visit counts of every child node of the root node. A temperature parameter controls the level of exploration when sampling actions. Set initially high to encourage exploration, the temperature is gradually reduced to eventually make action selection more greedy. The action selected is then executed in the environment and MCTS is conducted on the environment's next state until termination.
+Once the simulations are finished, an action is sampled from the distribution of visit counts of every child node of the root node. A temperature parameter controls the level of exploration when sampling actions. Set initially high to encourage exploration, the temperature is gradually reduced throughout self-play to eventually make action selection more greedy. The action selected is then executed in the environment and MCTS is conducted on the environment's next state until termination.
 
 ![Alt text](assets/muzero_mcts2.PNG)
 
@@ -124,9 +125,9 @@ At the end of every game of self-play, MuZero adds the game history to the repla
 
 For each game, a random position is sampled and is unrolled a certain amount of timesteps specified in the config parameter. The sampled position is passed into the representation function to get the hidden state representation. For each unrolled timestep, the corresponding action taken during the actual game of self-play is passed into the dynamics function, along with the current hidden state representation. In addition, each hidden state representation is passed into the prediction function to get the corresponding predicted policy and value for each timestep.
 
-The predicted rewards outputted by the dynamics function are matched against the actual rewards received during the game of self-play. The predicted policies outputted by the prediction function are matched against the policies outputted by the MCTS search. 
+The predicted rewards outputted by the dynamics function are matched against the actual transition rewards received during the game of self-play. The predicted policies outputted by the prediction function are matched against the policies outputted by the MCTS search. 
 
-The "ground truth" for the value is calculated using <img src="https://render.githubusercontent.com/render/math?math=n">-step bootstrapping, where <img src="https://render.githubusercontent.com/render/math?math=n"> is specified in the config parameter. If <img src="https://render.githubusercontent.com/render/math?math=n"> is a number larger than the episode length, then the value is calculated using the actual discounted transition rewards of the game of self-play, and reduces to the Monte Carlo return. If <img src="https://render.githubusercontent.com/render/math?math=n"> is less than or equal to the episode length, then the discounted transition rewards are used until the <img src="https://render.githubusercontent.com/render/math?math=n">-step, at which point the value outputted by the MCTS search is used to bootstrap. The predicted values outputted by the prediction function are then matched against these calculated values.
+The "ground truth" for the value is calculated using <img src="https://render.githubusercontent.com/render/math?math=n">-step bootstrapping, where <img src="https://render.githubusercontent.com/render/math?math=n"> is specified in the config parameter. If <img src="https://render.githubusercontent.com/render/math?math=n"> is a number larger than the episode length, then the value is calculated using the actual discounted transition rewards of the game of self-play, and reduces to the Monte Carlo return. If <img src="https://render.githubusercontent.com/render/math?math=n"> is less than or equal to the episode length, then the discounted transition rewards are used until the <img src="https://render.githubusercontent.com/render/math?math=n">-step, at which point the value outputted by the MCTS search (i.e. the mean action Q-value of the root node) is used to bootstrap. The predicted values outputted by the prediction function are then matched against these calculated values.
 
 The three neural networks are then trained end-to-end, matching the predicted rewards, values and policies with the "ground truth" rewards, values and policies. L2 regularization is used as well.
 
@@ -136,20 +137,15 @@ The three neural networks are then trained end-to-end, matching the predicted re
 
 ## File Descriptions
 * `classes.py` holds data structure classes used by MuZero
-* `main.py` holds functions for self-play, MCTS, training, testing and recording
+* `main.py` holds functions for self-play, MCTS, training and testing
 	* `self_play` is the main function to call; it initiates self-play and trains MuZero
 * `models/` holds saved neural network models used by MuZero
 * `replay_buffers/` holds replay buffer instances, saved during self-play
+* `recordings/` holds video file recordings of game renders when testing MuZero
 * `assets/` holds media files used in this `README.md`
 * `requirements.txt` holds all required dependencies, which can be installed by typing `pip install -r requirements.txt` in the command line
 
 For this project, I'm using Python 3.7.4.
-
-For the lunar lander environment, the following commands must be executed in Anaconda:
-* `conda install swig`
-* `pip install box2d`
-
-See [here](https://stackoverflow.com/questions/54252800/python-cant-install-box2d-swig-exe-failed-with-error-code-1) for additional information.
 
 ## Additional Resources
 * [Full interview with David Silver, who led the AlphaGo team](https://www.youtube.com/watch?v=uPUEq8d73JI)

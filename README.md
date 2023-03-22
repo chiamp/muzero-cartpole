@@ -93,11 +93,11 @@ Below is a description of how the MuZero algorithm works in more detail.
 
 ### Data structures
 MuZero is comprised of three neural networks: 
-ightarrow s^0$, which given an observation $o_t$ from the environment at time step $t$, outputs the hidden state representation $s^0$ of the observation at hypothetical time step $0$ (this hidden state will be used as the root node in MCTS, so its hypothetical time step is zero)
+* A representation function, $h(o_t) \rightarrow s^0$, which given an observation $o_t$ from the environment at time step $t$, outputs the hidden state representation $s^0$ of the observation at hypothetical time step $0$ (this hidden state will be used as the root node in MCTS, so its hypothetical time step is zero)
 	* The representation function is used in tandem with the dynamics function to represent the environment's state in whatever way the algorithm finds useful in order to make accurate predictions for the reward, value and policy
-ightarrow s^{k%2B1},r^{k%2B1}$, which given a hidden state representation $s^k$ at hypothetical time step $k$ and action $a^{k%2B1}$ at hypothetical time step $k%2B1$, outputs the predicted resulting hidden state representation $s^{k%2B1}$ and transition reward $r^{k%2B1}$ at hypothetical time step $k%2B1$
+* A dynamics function, $g(s^k,a^{k%2B1}) \rightarrow s^{k%2B1},r^{k%2B1}$, which given a hidden state representation $s^k$ at hypothetical time step $k$ and action $a^{k%2B1}$ at hypothetical time step $k%2B1$, outputs the predicted resulting hidden state representation $s^{k%2B1}$ and transition reward $r^{k%2B1}$ at hypothetical time step $k%2B1$
 	* The dynamics function is the learned transition model, which allows MuZero to utilize MCTS and plan hypothetical future actions on future board states
-ightarrow p^k,v^k$, which given a hidden state representation $s^k$, outputs the predicted policy distribution over actions $p^k$ and value $v^k$ at hypothetical time step $k$
+* A prediction function, $f(s^k) \rightarrow p^k,v^k$, which given a hidden state representation $s^k$, outputs the predicted policy distribution over actions $p^k$ and value $v^k$ at hypothetical time step $k$
 	* The prediction function is used to limit the search breadth by using the policy output to prioritize MCTS to search for more promising actions, and limit the search depth by using the value output as a substitute for a Monte Carlo rollout
 
 A replay buffer is used to store the history of played games, and will be sampled from during training.

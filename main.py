@@ -117,7 +117,7 @@ def mcts(game,network_model,temperature,config):
 
     # update Game search statistics
     game.value_history.append( root_node.cumulative_value/root_node.num_visits ) # use the root node's MCTS value as the ground truth value when training
-    game.policy_history.append(policy) # use the MCTS policy as the ground truth value when training
+    game.policy_history.append(policy.reshape(1,-1)) # use the MCTS policy as the ground truth value when training
 
     return action_index
 
@@ -284,7 +284,7 @@ if __name__ == '__main__':
                           'beta_1': 0.9, # parameter for Adam optimizer
                           'beta_2': 0.999 }, # parameter for Adam optimizer
                'test': { 'num_test_games': 10, # number of times to test the agent using greedy actions
-                         'record': True }, # True if you want to record the game renders, False otherwise
+                         'record': False }, # True if you want to record the game renders, False otherwise
                'seed': 0
                }
 
